@@ -8,6 +8,11 @@
 
 class illegal_exception {
 
+public:
+    const char * msg () const throw ()
+    {
+        return "illegal argument";
+    }
 };
 
 

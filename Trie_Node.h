@@ -16,10 +16,12 @@ private:
     Trie_Node* child[26]{nullptr};
     Trie_Node* parent = nullptr;
     char value = 'E';
-    bool isTerminal = false;
 public:
+    bool isTerminal = false;
 
-
+    char get_val() {
+        return value;
+    }
     //default constructor
     Trie_Node(char val, Trie_Node* parent_) {
         value = val;
@@ -51,68 +53,7 @@ public:
         word.erase(0,1);
         return child[next_alpha_index]->insert_w(word);
     }
-/*
-    //NOTE: A WORD HAS ONLY BEEN SUCCESFULLY INSERTED IF IT CREATED A TERMINAL NODE
-    bool insert_w(unsigned int current_index, string word) {
-        //if we are at the root
-        int wordlength = word.length();
-        if(value=='*'){
-            int alpha_index = (int)word[current_index]-97;
-            if(child[ alpha_index ] == nullptr){
-                child[ alpha_index ] = new Trie_Node();
-                child[ alpha_index ]->parent = this;
-            }
 
-            return child[ alpha_index ]->insert_w(current_index, word);
-        }
-        //this can only occur if no insertions have been made --> terminal nodes are not created
-        else if (this->isTerminal && current_index == word.length()) {
-            return false;
-        }
-        //can only occur if we have traversed a whole other word but we still have letters to insert
-        else if(this->isTerminal && current_index != word.length() ) {
-            child[0] = new Trie_Node();
-            child[0]->parent = this;
-            return child[0]->insert_w(current_index, word);
-        }
-        //else insert the letter in the current node, return the status of the insertion
-        else {
-            int next_alpha_index = (int)word[current_index+1]-97; //should get a value from 0-25
-            here is where we pick where the insertion should go
-
-            //in case the child of this node is a terminal node, only child[0] will be filled
-            if(parentOfTerminal) {
-                return child[0]->insert_w(current_index+1, word);
-            }
-
-            //in case we are about to create a terminal node
-            if(current_index+1 == word.length() && value == 'E') {
-                parentOfTerminal = true;
-                next_alpha_index = 0;
-            }
-            //in case we traversed the length of the word
-            else if(current_index == word.length()) {
-                //if we are not at a node we have just created, we have not inserted any letters and the insertion was bad
-                if(value != 'E')
-                    return false;
-                //this is the case when we have just created the node, we set this to a terminal node and return true for succesful insertion
-                value = ' ';
-                isTerminal = true;
-                return true;
-            }
-
-            value = word[current_index]; //this is redundant for traversing a word that already exists but kept for simplicity
-            if(child[next_alpha_index] == nullptr) {
-                child[next_alpha_index] = new Trie_Node();
-                child[next_alpha_index]->parent = this;
-            }
-
-
-            return child[next_alpha_index]->insert_w(current_index+1, word);
-        }
-
-
-    }*/
 
     void print(string *all_chars) {
         if(value == '*')
@@ -124,6 +65,21 @@ public:
         for(int i{0}; i<26; i++) {
             if(child[i] != nullptr) {
                 child[i]->print(all_chars);
+            }
+        }
+        *all_chars = all_chars->substr(0, all_chars->size()-1);
+    }
+
+    void print_subtree(string *all_chars, string prefix) {
+        if(value == '*')
+            *all_chars=prefix;
+        else
+            *all_chars+=value;
+        if(isTerminal)
+            cout<<*all_chars<<" ";
+        for(int i{0}; i<26; i++) {
+            if(child[i] != nullptr) {
+                child[i]->print_subtree(all_chars, prefix);
             }
         }
         *all_chars = all_chars->substr(0, all_chars->size()-1);
@@ -147,6 +103,22 @@ public:
 
         search_word.erase(0,1);
         return child[next_alpha_index]->search(search_word);
+    }
+
+    Trie_Node* search_substr(string substr) {
+        //base case
+        if(substr == "") {
+            return this;
+        }
+
+        int next_alpha_index = (int)substr[0]-97; //should get a value from 0-25
+
+        if(child[next_alpha_index] == nullptr) {
+            return nullptr;
+        }
+
+        substr.erase(0,1);
+        return child[next_alpha_index]->search_substr(substr);
     }
 
     bool delete_w(bool first_delete) {
@@ -183,6 +155,28 @@ public:
         }
         return true;
     }
+
+    void clear() {
+        for(int i{0}; i<26; i++) {
+            if(child[i] != nullptr) {
+                child[i]->clear();
+            }
+        }
+        if(value != '*') {
+            int alpha_index = (int)value-97; //should get a value from 0-25
+            Trie_Node* temp = parent;
+            temp->child[alpha_index] = nullptr;
+            parent = nullptr;
+            delete this;
+        }
+    }
+
+
+
+
+
+
+
 };
 
 

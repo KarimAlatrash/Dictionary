@@ -27,10 +27,10 @@ public:
     void insert_w(string new_word);
     void delete_w(string delete_word);
     Trie_Node* search_w(string search_word, bool print_status);
-    bool valid_arg(string arg);
     Trie_Node* head;
 
     void insert_c(string word, Trie_Node* curr_node);
+
 };
 
 

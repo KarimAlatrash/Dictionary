@@ -5,8 +5,10 @@
 #include "Trie.h"
 #include <string>
 #include <iostream>
-
+#include "illegal_exception.h"
 using namespace std;
+
+
 
 
 Trie::Trie() {
@@ -24,13 +26,13 @@ unsigned int Trie::get_size() {
 
 void Trie::insert_w(string word) {
 
-
     bool succesful = head->insert_w(word);
     if(succesful) {
-        cout << "succesfully inserted"<<endl;
+        cout << "success"<<endl;
+        size++;
     }
     else {
-        cout << "not inserted"<<endl;
+        cout << "failure"<<endl;
     }
 }
 void Trie::insert_c(string word, Trie_Node* curr_node) {
@@ -45,7 +47,8 @@ void Trie::print() {
     string all_chars;
     //head->print(&all_words);
     head->print(&all_chars);
-    cout<<endl;
+    if(size != 0)//in the event something was printed
+        cout<<endl;
     //cout<<all_chars<<endl;
 }
 
@@ -67,8 +70,10 @@ void Trie::delete_w(string delete_word) {
 
 
         bool isDeleted = last_char->delete_w(true);
-        if(isDeleted)
-            cout<<"success"<<endl;
+        if(isDeleted) {
+            cout << "success" << endl;
+            size--;
+        }
         else
             cout<<"failure"<<endl;
         return;
@@ -76,3 +81,28 @@ void Trie::delete_w(string delete_word) {
     cout<<"failure"<<endl;
 
 }
+
+void Trie::autocomplete(string word) {
+
+    Trie_Node* end_of_substr = head->search_substr(word);
+
+    if(end_of_substr != nullptr) {
+        char val = end_of_substr->get_val();
+        string temp;
+        end_of_substr->set_val('*');
+        end_of_substr->print_subtree(&temp, word);
+        if(!end_of_substr->isTerminal) //in the event something was printed
+            cout<<endl;
+        end_of_substr->set_val(val);
+    }
+
+
+}
+
+void Trie::clear_trie() {
+    head->clear();
+}
+
+
+
+
