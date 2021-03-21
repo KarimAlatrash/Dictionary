@@ -17,6 +17,6 @@ all: trietest
 trietest: trietest.cpp Trie_Node.h Trie.cpp
 	g++ -std=c++11 -o triedriver trietest.cpp Trie_Node.h Trie.cpp
 
-# List all the executables under 'all:'
+# List all the executablmes under 'all:'
 clean:
-	rm *.o triedriver
+	rm triedriver

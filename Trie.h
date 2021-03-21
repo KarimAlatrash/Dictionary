@@ -29,8 +29,6 @@ public:
     Trie_Node* search_w(string search_word, bool print_status);
     Trie_Node* head;
 
-    void insert_c(string word, Trie_Node* curr_node);
-
 };
 
 

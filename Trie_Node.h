@@ -27,10 +27,7 @@ public:
         value = val;
         parent = parent_;
     }
-    Trie_Node(bool isTerminal, Trie_Node* parent) {
-        isTerminal = true;
-        value = ' ';
-    }
+
     void set_val(char new_val) {
         value = new_val;
     }
@@ -55,34 +52,34 @@ public:
     }
 
 
-    void print(string *all_chars) {
+    void print(string *current_word, string *final_string) {
         if(value == '*')
-            *all_chars="";
+            *current_word="";
         else
-            *all_chars+=value;
+            *current_word+=value;
         if(isTerminal)
-            cout<<*all_chars<<" ";
+            *final_string += *current_word + " ";
         for(int i{0}; i<26; i++) {
             if(child[i] != nullptr) {
-                child[i]->print(all_chars);
+                child[i]->print(current_word, final_string);
             }
         }
-        *all_chars = all_chars->substr(0, all_chars->size()-1);
+        *current_word = current_word->substr(0, current_word->size() - 1);
     }
 
-    void print_subtree(string *all_chars, string prefix) {
+    void print_subtree(string *current_word, string prefix, string *final_string) {
         if(value == '*')
-            *all_chars=prefix;
+            *current_word=prefix;
         else
-            *all_chars+=value;
+            *current_word+=value;
         if(isTerminal)
-            cout<<*all_chars<<" ";
+            *final_string += *current_word + " ";
         for(int i{0}; i<26; i++) {
             if(child[i] != nullptr) {
-                child[i]->print_subtree(all_chars, prefix);
+                child[i]->print_subtree(current_word, prefix, final_string);
             }
         }
-        *all_chars = all_chars->substr(0, all_chars->size()-1);
+        *current_word = current_word->substr(0, current_word->size() - 1);
     }
 
     Trie_Node* search(string search_word) {
@@ -130,8 +127,14 @@ public:
             return true;
         }
 
+        bool leaf_status = this->isLeaf();
+
+        if(leaf_status && isTerminal && !first_delete) {
+            return true;
+        }
+
         //checks if this is a leaf node
-        if(isLeaf(this)) {
+        else if(leaf_status) {
             Trie_Node* temp = parent;
             temp->child[alpha_index] = nullptr;
             delete this;
@@ -147,9 +150,9 @@ public:
 
     }
 
-    bool isLeaf(Trie_Node *node){
+    bool isLeaf(){
         for(int i{0}; i<26; i++) {
-            if(node->child[i] != nullptr) {
+            if(child[i] != nullptr) {
                 return false;
             }
         }

@@ -35,20 +35,19 @@ void Trie::insert_w(string word) {
         cout << "failure"<<endl;
     }
 }
-void Trie::insert_c(string word, Trie_Node* curr_node) {
-
-}
 
 Trie::~Trie() {
-
+    head->clear();
+    delete head;
 }
 
 void Trie::print() {
     string all_chars;
+    string final;
     //head->print(&all_words);
-    head->print(&all_chars);
-    if(size != 0)//in the event something was printed
-        cout<<endl;
+    head->print(&all_chars, &final);
+    if(!final.empty())//in the event something was printed
+        cout<<final.substr(0, final.length()-1)<<endl;
     //cout<<all_chars<<endl;
 }
 
@@ -89,10 +88,13 @@ void Trie::autocomplete(string word) {
     if(end_of_substr != nullptr) {
         char val = end_of_substr->get_val();
         string temp;
+        string final;
         end_of_substr->set_val('*');
-        end_of_substr->print_subtree(&temp, word);
-        if(!end_of_substr->isTerminal) //in the event something was printed
-            cout<<endl;
+        end_of_substr->print_subtree(&temp, word, &final);
+
+        if(!final.empty())//in the event something was printed
+            cout<<final.substr(0, final.length()-1)<<endl;
+
         end_of_substr->set_val(val);
     }
 
@@ -101,6 +103,7 @@ void Trie::autocomplete(string word) {
 
 void Trie::clear_trie() {
     head->clear();
+    size=0;
 }
 
 
